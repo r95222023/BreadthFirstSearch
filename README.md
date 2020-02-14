@@ -15,10 +15,10 @@ Usage:
     eightpuzzle.engage();
 
 for 8 puzzle:
-'1-2-3-4-5-6-7-8-0' represent
-  123
-  456
-  780
+'1-2-3-4-5-6-7-8-0' represent <br />
+  123 <br />
+  456 <br />
+  780 <br />
 and similar for 15 puzzle.
 
 Tests can then be run after installation of NodeJs with:
