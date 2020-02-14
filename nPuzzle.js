@@ -158,7 +158,7 @@ class NPuzzle {
                 while (search.length) {
                     i++;
                     search = that.breadthSearch(search);
-                    console.log(`depth: ${i}`)
+                    // console.log(`depth: ${i}`)
                 }
                 const endTime = new Date();
                 console.log(`Total time: ${endTime-startTime}ms`);
