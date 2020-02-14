@@ -39,19 +39,43 @@ function getStateId(state){
     return state.join('-');
 }
 
+/* This post on stackexchange explained the condition when a puzzle
+   is unsolvable http://math.stackexchange.com/a/838818
+*/
+function checkSolvable(state) {
+    const pos = state.indexOf(0);
+    let _state = state.slice();
+    _state.splice(pos,1);
+    let count = 0;
+    for (let i = 0; i < _state.length; i++) {
+        for (let j = i + 1; j < _state.length; j++) {
+            if (_state[i] > _state[j]) {
+                count++;
+            }
+        }
+    }
+    return count % 2 === 0;
+}
+
 class NPuzzle {
     constructor(init) {
         //EX: init = {213456780: null} for initial state [2,1,3,4,5,6,7,8,0]
         let n =0;
+        this.isSolvable =true;
         let initStates = [];
         for (let key in init){
+            //init has only one object inside, use loop to get the initial state
             const initState = key.split('-');
+            //rebuild initial state by using string.split method
             initState.forEach((num, index)=>{
                 initState[index] = Number(num)
+                //make array contain only numbers
             });
+            this.isSolvable = checkSolvable(initState);
             initStates.push(initState);
             n = initState.length;
         }
+
 
         const that = this;
         const sideSize = Math.sqrt(n);
@@ -82,7 +106,6 @@ class NPuzzle {
         this.goalState = getGoalState(n);
         this.move = move;
         this.getChildren = (state) => {
-            //let state = that.states[stateId].s;
             let newState;
             let children = [];
             let pos = state.indexOf(0);
@@ -131,69 +154,23 @@ class NPuzzle {
             let search = that.breadthSearch(initStates || states);
             let i= 0;
             console.log(`start with: ${initStates}`);
-            while (search.length) {
-                i++;
-                search = that.breadthSearch(search);
-                console.log(`depth: ${i}`)
+            if(that.isSolvable){
+                while (search.length) {
+                    i++;
+                    search = that.breadthSearch(search);
+                    console.log(`depth: ${i}`)
+                }
+                const endTime = new Date();
+                console.log(`Total time: ${endTime-startTime}ms`);
+                console.log(`Cost: ${that.cost} steps.`);
+                console.log(`Depth: ${search.steps.length}`);
+                console.log(`Solution: ${JSON.stringify(search.steps)}`);
+            } else {
+                console.log(`Warning: the initial state is not solvable!`)
             }
-            const endTime = new Date();
-            console.log(`Total time: ${endTime-startTime}ms`);
-            console.log(`Cost: ${that.cost} steps.`);
-            console.log(`Depth: ${search.steps.length}`);
-            console.log(`Solution: ${JSON.stringify(search.steps)}`);
             return search;
         }
     }
-}
-
-
-
-/* This post on stackexchange explained the condition when a puzzle
-   is unsolvable http://math.stackexchange.com/a/838818
-*/
-function checkSolvable(state) {
-    var pos = state.indexOf(0);
-    var _state = state.slice();
-    _state.splice(pos,1);
-    var count = 0;
-    for (var i = 0; i < _state.length; i++) {
-        for (var j = i + 1; j < _state.length; j++) {
-            if (_state[i] > _state[j]) {
-                count++;
-            }
-        }
-    }
-    return count % 2 === 0;
-}
-
-/* Fisher-Yates shuffle http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*/
-function shuffle(array) {
-    var size = array.length;
-    var rand;
-    for (var i = 1; i < size; i += 1) {
-        rand = Math.round(Math.random() * i);
-        swap(array, rand, i);
-    }
-    return array;
-}
-
-function generatePuzzle(state) {
-    var firstElement, secondElement;
-    var _state = state.slice();
-    shuffle(_state);
-    if (!checkSolvable(_state)) {
-        firstElement = _state[0] !== 0 ? 0 : 3;
-        secondElement = _state[1] !== 0 ? 1 : 3;
-        swap(_state, firstElement, secondElement);
-    }
-    // _state = [1, 0, 2, 3, 4, 5, 6, 7, 8];
-    // _state = [0,7,4,8,2,1,5,3,6];
-    // _state = [6,3,1,4,7,2,0,5,8];
-    // _state = [8,0,1,3,4,7,2,6,5];
-    _state = [8, 6, 7, 2, 5, 4, 3, 0, 1]; //32 steps
-    // _state = [0,8,7,6,3,5,1,4,2]; //29 steps
-    console.log('Puzzle to solve: [' + _state + ']');
-    return _state;
 }
 
 
