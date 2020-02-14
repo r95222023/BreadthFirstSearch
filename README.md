@@ -9,6 +9,7 @@ It provides:
 
 
 Usage:
+
     const NPuzzle = require('./nPuzzle');
     initState = {'8-6-7-2-5-4-3-0-1': null};
     eightpuzzle = new NPuzzle(initState);
