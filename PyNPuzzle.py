@@ -126,19 +126,41 @@ def trace_back(state):
     return steps[::-1]
 
 
+def read_move(steps):
+    res = []
+    size = len(steps[0])
+    side_size = int(math.sqrt(size))
+    for i in range(0, len(steps)-1):
+        state = [int(j) for j in list(steps[i].replace('[', '').replace(']', '').split(', '))]
+        next_state = [int(k) for k in list(steps[i+1].replace('[', '').replace(']', '').split(', '))]
+        next_pos = next_state.index(0)
+        pos = state.index(0)
+        rel = next_pos-pos
+        direction = 'up'
+        if rel == 1:
+            direction = 'right'
+        if rel == -1:
+            direction = 'left'
+        if rel == side_size:
+            direction = 'down'
+        res.append(direction)
+    return res
+
+
 def breadth_search(states):
     cost = 0
-    steps = []
+    res = []
     children = []
     for state in states:
         cost = cost + 1
         if compare(state):
             print('Bingo!!')
-            steps = {'steps': trace_back(state), 'cost': cost}
+            steps = trace_back(state)
+            res = {'moves:': read_move(steps), 'steps': trace_back(state), 'cost': cost}
         else:
             for child in get_children(state):
                 children.append(child)
-    return steps if ('steps' in steps) else children
+    return res if ('steps' in res) else children
 
 
 def engage(state):
@@ -151,10 +173,20 @@ def engage(state):
             search = breadth_search(search)
         print('Depth: {}'.format(i))
         print('Cost: {}'.format(search['cost']))
+        # print('Moves: {}'.format(search['moves']))
         print('Steps: {}'.format(search['steps']))
+        print(search['moves'])
     else:
         print('Warning: the given state is not solvable')
     return
 
 
-engage([1, 0, 2, 4, 5, 7, 3, 8, 9, 6, 11, 12, 13, 10, 14, 15])
+class NPuzzle:
+    def __init__(self, init_history):
+        self.history = init_history or {}
+        self.is_solvable = is_solvable
+        self.get_children = get_children
+        self.breadth_search = breadth_search
+        self.engage = engage
+
+
