@@ -42,7 +42,7 @@ function getStateId(state){
 /* This post on stackexchange explained the condition when a puzzle
    is unsolvable http://math.stackexchange.com/a/838818
 */
-function checkSolvable(state) {
+function checkSolvable(state, sideSize) {
     const pos = state.indexOf(0);
     let _state = state.slice();
     _state.splice(pos,1);
@@ -54,7 +54,7 @@ function checkSolvable(state) {
             }
         }
     }
-    return count % 2 === 0;
+    return count % (sideSize-1) === 0;
 }
 
 class NPuzzle {
@@ -71,9 +71,9 @@ class NPuzzle {
                 initState[index] = Number(num)
                 //make array contain only numbers
             });
-            this.isSolvable = checkSolvable(initState);
             initStates.push(initState);
             n = initState.length;
+            this.isSolvable = checkSolvable(initState, Math.sqrt(n));
         }
 
 

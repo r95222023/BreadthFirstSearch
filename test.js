@@ -13,7 +13,7 @@ eightpuzzle.engage();
 
 
 //15-puzzle test
-initState = {'1-2-3-4-5-0-7-8-9-6-10-12-13-14-11-15': null};
+initState = {'1-0-2-4-5-7-3-8-9-6-11-12-13-10-14-15': null};
 fifteenpuzzle = new NPuzzle(initState);
 fifteenpuzzle.engage();
 // start with: 1,2,3,4,5,0,7,8,9,6,10,12,13,14,11,15
